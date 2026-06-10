@@ -1,5 +1,6 @@
 {
   "chat.tools.terminal.autoApprove": {
-    "npx create-vite@latest": true
+    "npx create-vite@latest": true,
+    "npx jest": true
   }
 }

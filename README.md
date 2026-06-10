@@ -6,7 +6,9 @@ Detta är en fullstack-applikation byggd för att maximera hastigheten och kvali
 
 ### ?? Backend & API-struktur
 
-_Väntar pp Micro-Step 1.3..._
+Micro-Step 1.3: En minimal Express-app skapades i `backend/server.js`.
+Appen exporterar `app` för testning och svarar på `GET /` med status 200.
+Detta gjorde att smoke-testet för rot-routen gick från Red → Green.
 
 ### ?? Frontend & UI
 

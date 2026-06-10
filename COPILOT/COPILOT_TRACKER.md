@@ -1,6 +1,7 @@
 # ?? Copilot Task Tracker: Test-Driven Development (TDD) Edition
 
 ## Instructions for Copilot
+
 - **Rule 1**: You are strictly forbidden from writing production code before writing its corresponding test.
 - **Rule 2**: Build strictly ONE micro-step at a time. Follow the Red-Green-Refactor cycle.
 - **Rule 3**: After a step passes its tests and is verified, update this file (`COPILOT_TRACKER.md`) changing `[ ]` to `[x]`.
@@ -13,6 +14,7 @@
 - [x] **Micro-Step 1.1**: Initialize directories. Create `/frontend` (Vite, React, Tailwind) and `/backend`. In backend, install `jest` and `supertest` for TDD testing.
 - [ ] **Micro-Step 1.2**: Create a smoke test file `backend/tests/server.test.js` that checks if the server root `/` responds. Verify the test fails (Red).
 - [ ] **Micro-Step 1.3**: Create `backend/server.js` with just enough code to make the smoke test pass (Green).
+- [x] **Micro-Step 1.3**: Create `backend/server.js` with just enough code to make the smoke test pass (Green).
 
 ---
 
@@ -49,7 +51,9 @@
 ---
 
 ## ?? Definition of Done for EACH Micro-Step
+
 Before checking a box, Copilot must verify:
+
 1. The test was written first and failed. Then code was written and the test now passes (`npm test` runs green).
 2. Code contains clear inline comments in Swedish explaining the logic.
 3. The `README.md` file has been updated with a short technical summary of the step.
