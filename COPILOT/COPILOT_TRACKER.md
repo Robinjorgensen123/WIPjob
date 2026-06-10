@@ -22,6 +22,7 @@
 
 - [ ] **Micro-Step 2.1**: Write a test in `backend/tests/resume.test.js` asserting that the resume module exports an object containing valid string fields for profile, skills, and experience. (Red)
 - [ ] **Micro-Step 2.2**: Create `backend/data/myResume.js` with your profile details to make the test pass. (Green)
+ - [x] **Micro-Step 2.2**: Create `backend/data/myResume.js` with your profile details to make the test pass. (Green)
 
 ---
 

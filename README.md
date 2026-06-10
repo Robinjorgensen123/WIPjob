@@ -10,6 +10,10 @@ Micro-Step 1.3: En minimal Express-app skapades i `backend/server.js`.
 Appen exporterar `app` för testning och svarar på `GET /` med status 200.
 Detta gjorde att smoke-testet för rot-routen gick från Red → Green.
 
+Micro-Step 2.2: En resume-datafil skapades i `backend/data/myResume.js`.
+Filen exporterar ett objekt med `profile`, `skills` och `experience`
+för en fullstack JavaScript-utvecklare så att resume-testet kan gå grönt.
+
 ### ?? Frontend & UI
 
 _Väntar på Phase 5..._
