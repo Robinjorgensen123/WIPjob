@@ -14,6 +14,9 @@ Micro-Step 2.2: En resume-datafil skapades i `backend/data/myResume.js`.
 Filen exporterar ett objekt med `profile`, `skills` och `experience`
 för en fullstack JavaScript-utvecklare så att resume-testet kan gå grönt.
 
+Micro-Step 3.2: Implementerade `GET /api/jobs` i `backend/server.js`.
+Endpointen returnerar en hårdkodad array med 5 fiktiva juniorjobb (fält: `id`, `title`, `company`, `description`) så backend-smoke-testet för jobb-API:t går grönt.
+
 ### ?? Frontend & UI
 
 _Väntar på Phase 5..._

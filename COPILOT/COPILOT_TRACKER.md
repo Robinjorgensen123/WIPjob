@@ -30,6 +30,7 @@
 
 - [ ] **Micro-Step 3.1**: Write a test in `backend/tests/server.test.js` for `GET /api/jobs`. It must assert a `200 OK` status and that the response is an array containing job objects. (Red)
 - [ ] **Micro-Step 3.2**: Implement the `GET /api/jobs` endpoint in `server.js` with 5 mock junior developer jobs to make the test pass. (Green)
+ - [x] **Micro-Step 3.2**: Implement the `GET /api/jobs` endpoint in `server.js` with 5 mock junior developer jobs to make the test pass. (Green)
 
 ---
 
