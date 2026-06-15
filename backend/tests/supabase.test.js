@@ -4,6 +4,9 @@
 // enligt TDD: först test (Red), sedan implementera routen i server.js.
 
 import request from "supertest";
+// Ladda .env i testmiljön så att process.env innehåller placeholders
+import dotenv from "dotenv";
+dotenv.config();
 
 // Kontrollera att nödvändiga Supabase-miljövariabler är laddade
 describe("Supabase environment variables", () => {
@@ -38,24 +41,21 @@ describe("POST /api/tracked-jobs (Supabase integration - mock)", () => {
 
   test("should call supabase.from().insert() and return 201 Created when job is tracked", async () => {
     // --- Arrange ---
-    // Återställ moduler så vi kan mocka @supabase/supabase-js innan server-import
+    // Återställ moduler så vi kan injicera en mock-klient innan server-import
     jest.resetModules();
 
-    // Mocka Supabase-klienten: createClient() returnerar ett objekt
-    // med en `from`-metod som i sin tur har `insert`.
-    const mockInsert = jest
+    // Mocka Supabase-klienten genom att injicera en global mock som
+    // `server.js` kommer att upptäcka (globalThis.__SUPABASE_MOCK__).
+    // Mocka insert så att den returnerar ett objekt med en `select()`-metod
+    // som i sin tur returnerar en promise med { data, error }.
+    const mockSelect = jest
       .fn()
       .mockResolvedValue({ data: [{ id: "1" }], error: null });
+    const mockInsert = jest.fn().mockReturnValue({ select: mockSelect });
     const mockFrom = jest.fn().mockReturnValue({ insert: mockInsert });
+    globalThis.__SUPABASE_MOCK__ = { from: mockFrom };
 
-    // Mocka ES-modulen @supabase/supabase-js innan vi importerar servern.
-    // Detta gör att när server.js anropar createClient() så får den vår
-    // mockade klient med en `from().insert()`-funktion.
-    await jest.unstable_mockModule("@supabase/supabase-js", () => ({
-      createClient: () => ({ from: mockFrom }),
-    }));
-
-    // Nu importerar vi servern som kommer att använda den mockade createClient
+    // Nu importerar vi servern som kommer att använda den injicerade mocken
     const { default: app } = await import("../server.js");
 
     // Testpayload som ska skickas till endpointen
@@ -79,7 +79,11 @@ describe("POST /api/tracked-jobs (Supabase integration - mock)", () => {
     // Kontrollera att vår mockade supabase-klient anropades korrekt.
     expect(mockFrom).toHaveBeenCalled();
     expect(mockInsert).toHaveBeenCalledWith(
-      expect.objectContaining({ jobId: "123" }),
+      expect.arrayContaining([expect.objectContaining({ job_id: "123" })]),
     );
+    expect(mockSelect).toHaveBeenCalled();
+
+    // Rensa den globala mocken för att inte påverka andra tester
+    delete globalThis.__SUPABASE_MOCK__;
   });
 });

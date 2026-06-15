@@ -22,7 +22,12 @@ const app = express();
 // Vi sätter `supabase` till `null` om variabler saknas så att servern
 // inte kastar undantag i testmiljöer.
 let supabase = null;
-if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+// Tillåt testkod att injicera en mockad Supabase-klient via globalThis.__SUPABASE_MOCK__
+// Detta gör det enkelt att undvika nätverksanrop i tester och säkerställer att
+// vi kan kontrollera att `.from().insert()` anropas korrekt.
+if (globalThis.__SUPABASE_MOCK__) {
+  supabase = globalThis.__SUPABASE_MOCK__;
+} else if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
   // Skapar klienten med anonyma nyckeln (client-side/public key)
   supabase = createClient(
     process.env.SUPABASE_URL,
