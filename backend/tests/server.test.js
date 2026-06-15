@@ -4,7 +4,34 @@
 // eftersom implementationen av vissa endpoints ännu inte finns.
 
 import request from "supertest";
-import app from "../server.js"; // Importerar Express-appen
+import { jest } from "@jest/globals";
+
+// För testsyfte sätt en test-API-nyckel så server.js initierar OpenAI-klienten.
+process.env.OPENAI_API_KEY = "test";
+
+// Mocka OpenAI SDK innan vi importerar app så att konstruktorn `new OpenAI()`
+// i server.js använder vår mock. Vi exponerar `createMock` så tester kan
+// spionera på vad som skickas till SDK:ns `create`-metod.
+let createMock;
+jest.mock("openai", () => {
+  createMock = jest.fn().mockResolvedValue({
+    choices: [
+      {
+        message: {
+          content: JSON.stringify({ coverLetter: "mock", keyMatches: [] }),
+        },
+      },
+    ],
+  });
+
+  function OpenAI() {
+    return { chat: { completions: { create: createMock } } };
+  }
+
+  return { __esModule: true, default: OpenAI };
+});
+
+import app from "../server.js"; // Importera Express-appen efter mock-setup
 
 // Tester för rot-routen `/`
 describe("Root route `/`", () => {
@@ -106,5 +133,60 @@ describe("GET /api/jobs (Arbetsförmedlingen integration - mock)", () => {
     expect(first.title).toMatch(/Frontend Engineer/i);
     expect(first.company).toMatch(/Acme Corp/i);
     expect(first.description).toMatch(/React/i);
+  });
+});
+
+// === Phase 10: Production AI Integration (Un-mocking the AI) ===
+// Micro-Step 10.1: Integrationstest som verifierar payload byggd mot det
+// officiella OpenAI SDK:t. Vi mockar SDK:n men spionerar på anropsargumenten
+// för att säkerställa att `userCv` faktiskt skickas med i prompten.
+describe("POST /api/generate-cv (SDK payload assertion)", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+    // Rensa test-API-nyckel så andra tester inte oavsiktligt använder den
+    try {
+      delete process.env.OPENAI_API_KEY;
+    } catch (e) {}
+  });
+
+  test("ska skicka en meddelandepayload till OpenAI som innehåller text från userCv", async () => {
+    // --- Arrange ---
+    // Unikt fragment i userCv så vi kan söka efter det i prompten
+    const uniqueSnippet = "SPECIAL_CV_MARKER_TypeScriptReact";
+    const jobDescription =
+      "Sök: Frontend-utvecklare med React/TypeScript-kunskaper";
+
+    // Här skickar vi både jobDescription och userCv i body enligt testkravet.
+    const userCv = `Profile: Robin - Fullstack dev\nSkills: React, TypeScript, Node.js\nNote: ${uniqueSnippet}`;
+
+    // --- Act ---
+    const res = await request(app)
+      .post("/api/generate-cv")
+      .send({ jobDescription, userCv })
+      .set("Accept", "application/json");
+
+    // --- Assert ---
+    // Först, förväntar vi att servern försökte anropa OpenAI SDK:n
+    expect(createMock).toHaveBeenCalled();
+
+    // Hämta det första anrops-argumentet till create-metoden
+    const calledArg = createMock.mock.calls[0][0];
+
+    // Kontrollera att `messages` finns och att en user-message innehåller vår userCv-text
+    expect(calledArg).toHaveProperty("messages");
+    const messages = calledArg.messages;
+    const userMessage = messages.find((m) => m.role === "user");
+
+    // Säkerhetskontroll: userMessage ska existera och vara en sträng
+    expect(userMessage).toBeDefined();
+    expect(typeof userMessage.content).toBe("string");
+
+    // Här är den viktiga assertionen: prompten som skickas till SDK:n måste
+    // innehålla texten från `userCv` (vårt unika fragment).
+    expect(userMessage.content).toMatch(new RegExp(uniqueSnippet));
+
+    // Vi förväntar oss fortfarande att endpointen returnerar ett JSON-objekt
+    expect(res.status).toBe(200);
+    expect(typeof res.body).toBe("object");
   });
 });
