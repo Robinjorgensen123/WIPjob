@@ -71,13 +71,9 @@ Before checking a box, Copilot must verify:
 
 - [x] **Micro-Step 7.2**: Implement the API fetching gateway in `backend/server.js` to replace the 5 mock jobs and pass the backend tests. (Green)
 - [x] **Micro-Step 7.3**: Write a frontend integration test in `JobSearch.test.jsx` ensuring that real API fields (like company name and description) render correctly in the list. (Green)
- - [x] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
-
-- [ ] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
+- [x] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
 
 ## 📄 Phase 8: Dynamic CV Upload & AI Tailoring
 
-- [ ] **Micro-Step 8.1**: Write a frontend test for `CVManager.jsx` asserting that a user can upload/paste a CV text and see a success indicator. (Red)
-- [ ] **Micro-Step 8.2**: Implement state/local storage or a backend save for the uploaded CV in `CVManager.jsx`. (Green)
-- [ ] **Micro-Step 8.3**: Write an end-to-end integration test asserting that clicking "Select & Tailor" on a specific job page sends the _currently uploaded_ CV to the AI backend instead of the old static file. (Red)
-- [ ] **Micro-Step 8.4**: Wire up the AI trigger button to use the dynamically uploaded CV data and display the tailored cover letter. (Green)
+[x] **Micro-Step 8.1**: Write a frontend test for `CVManager.jsx` asserting that a user can upload/paste a CV text and see a success indicator. (Green)
+[x] **Micro-Step 8.2**: Implement state/local storage or a backend save for the uploaded CV in `CVManager.jsx`. (Green)
