@@ -127,3 +127,93 @@ describe("JobSearch page - integration med backend (mock)", () => {
     );
   });
 });
+
+// === Phase 11: Frontend UI Overhaul (Micro-Step 11.1) ===
+// Nya komponenttester som förväntar sig avancerade UI-element: sök/filter,
+// status-chips per jobbkort och en modal/action-yta för AI-brevet.
+// Viktigt: Vi ändrar ENBART testerna nu så att de initialt failar (Red).
+describe("JobSearch UI overhaul - advanced elements (RED)", () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+    try {
+      delete global.fetch;
+    } catch (e) {}
+  });
+
+  test("sidan innehåller ett sök- eller filterfält för jobb", async () => {
+    // Mocka fetch så komponenten får jobb att rendera
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: "job-1", title: "Frontend Engineer", company: "Acme", status: "Ej sökt" },
+      ],
+    });
+
+    render(
+      <BrowserRouter>
+        <JobSearch onSelectJob={jest.fn()} />
+      </BrowserRouter>,
+    );
+
+    // Vänta tills komponenten gjort sin fetch
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+
+    // Förväntar ett sökfält (role=searchbox) eller input med placeholder som innehåller 'sök'
+    const searchbox = screen.queryByRole("searchbox") || screen.queryByPlaceholderText(/sök|search/i);
+
+    // Detta bör vara sant i den nya designen — testet bör initialt FAILA
+    expect(searchbox).toBeInTheDocument();
+  });
+
+  test("varje jobbkort visar en status-tagg/chip (t.ex. 'Ej sökt', 'Sparad')", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: "job-1", title: "Frontend Engineer", company: "Acme", status: "Ej sökt" },
+        { id: "job-2", title: "Backend Dev", company: "Beta", status: "Sparad" },
+      ],
+    });
+
+    render(
+      <BrowserRouter>
+        <JobSearch onSelectJob={jest.fn()} />
+      </BrowserRouter>,
+    );
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+
+    // Hämta alla listitems som representerar jobbkort
+    const items = screen.queryAllByRole("listitem");
+    expect(items.length).toBeGreaterThan(0);
+
+    // Kontrollera att minst ett jobbkort innehåller en status-tagg
+    const statusRegex = /Ej sökt|Sparad|Skräddarsydd/;
+    const anyHasStatus = items.some((el) => statusRegex.test(el.textContent));
+
+    // I den nya UI:n ska detta vara sant — vi förväntar oss ett rött test tills vi implementerar.
+    expect(anyHasStatus).toBe(true);
+  });
+
+  test("finns en modal eller action-yta för att visa det AI-genererade brevet", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: "job-1", title: "Frontend Engineer", company: "Acme", status: "Ej sökt" },
+      ],
+    });
+
+    render(
+      <BrowserRouter>
+        <JobSearch onSelectJob={jest.fn()} />
+      </BrowserRouter>,
+    );
+
+    await waitFor(() => expect(global.fetch).toHaveBeenCalled());
+
+    // Leta efter modal: role="dialog" eller testid "ai-letter-modal"
+    const dialog = screen.queryByRole("dialog") || screen.queryByTestId("ai-letter-modal");
+
+    // Detta ska finnas i design-överhalningen — initialt RED
+    expect(dialog).toBeInTheDocument();
+  });
+});
