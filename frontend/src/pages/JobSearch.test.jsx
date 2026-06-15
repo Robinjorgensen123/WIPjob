@@ -162,7 +162,7 @@ describe("JobSearch UI overhaul - advanced elements (RED)", () => {
     const searchbox = screen.queryByRole("searchbox") || screen.queryByPlaceholderText(/sök|search/i);
 
     // Detta bör vara sant i den nya designen — testet bör initialt FAILA
-    expect(searchbox).toBeInTheDocument();
+    expect(searchbox).not.toBeNull();
   });
 
   test("varje jobbkort visar en status-tagg/chip (t.ex. 'Ej sökt', 'Sparad')", async () => {
@@ -214,6 +214,6 @@ describe("JobSearch UI overhaul - advanced elements (RED)", () => {
     const dialog = screen.queryByRole("dialog") || screen.queryByTestId("ai-letter-modal");
 
     // Detta ska finnas i design-överhalningen — initialt RED
-    expect(dialog).toBeInTheDocument();
+    expect(dialog).not.toBeNull();
   });
 });
