@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar";
+import Home from "./pages/Home";
+import JobSearch from "./pages/JobSearch";
+import CVManager from "./pages/CVManager";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
@@ -10,33 +13,10 @@ import "./App.css";
 // Kommentarer på svenska för att förklara layouten.
 function App() {
   const [selectedJob, setSelectedJob] = useState(null);
-  // State för att lagra jobb som hämtas från API
-  const [jobs, setJobs] = useState([]);
-  // State för att lagra det genererade personliga brevet
+  // State för det genererade personliga brevet
   const [generatedLetter, setGeneratedLetter] = useState(null);
   // State för att indikera laddning vid generate-cv-anrop
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // useEffect som körs en gång vid mount och hämtar jobb från /api/jobs
-  useEffect(() => {
-    let mounted = true;
-
-    fetch("/api/jobs")
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data) => {
-        if (mounted && Array.isArray(data)) setJobs(data);
-      })
-      .catch(() => {
-        if (mounted) setJobs([]);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   // Asynkron funktion som anropas när användaren klickar "Select & Tailor"
   // Tar emot en textbeskrivning av jobbet och postar den till /api/generate-cv
@@ -78,38 +58,16 @@ function App() {
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="flex flex-col lg:flex-row gap-6">
-              {/* Vänstersida: Job List Area */}
+              {/* Vänstersida: Routes visar Home, JobSearch eller CVManager */}
               <section className="lg:w-1/2 bg-white rounded-lg shadow p-6">
-                {/* Kommentar: här kommer en lista med jobbannonser */}
-                <h2 className="text-xl font-semibold mb-4">Job List Area</h2>
-
-                {/* Rendera jobben när de är hämtade från API:et */}
-                {jobs.length === 0 ? (
-                  <p className="text-sm text-gray-500">
-                    Här listas tillgängliga jobb (placeholder).
-                  </p>
-                ) : (
-                  <ul>
-                    {jobs.map((job) => (
-                      <li key={job.id} className="mb-4">
-                        {/* Visa jobbtitel och företag så tester kan hitta dem */}
-                        <div className="text-lg font-medium">{job.title}</div>
-                        <div className="text-sm text-gray-500">
-                          {job.company}
-                        </div>
-                        {/* Select & Tailor-knapp som triggar generate-cv POST-anrop */}
-                        <button
-                          className="mt-2 inline-block bg-green-500 text-white px-3 py-1 rounded"
-                          onClick={() =>
-                            handleSelectJob(`${job.title} at ${job.company}`)
-                          }
-                        >
-                          Select & Tailor
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/jobs"
+                    element={<JobSearch onSelectJob={handleSelectJob} />}
+                  />
+                  <Route path="/cv" element={<CVManager />} />
+                </Routes>
               </section>
 
               {/* Högersida: Tailored CV / Cover Letter Area */}

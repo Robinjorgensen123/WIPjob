@@ -65,8 +65,9 @@ Before checking a box, Copilot must verify:
 
 - [x] **Micro-Step 6.1**: Install `react-router-dom` in frontend. Write a test in `App.test.jsx` that asserts the Navbar renders with links for "Home", "Sök Jobb" och "CV". (Red)
 - [x] **Micro-Step 6.2**: Implement `BrowserRouter` and the `Navbar` component to make the navigation test pass. (Green)
-- [ ] **Micro-Step 6.3**: Write a test verifying that clicking on "CV" navigates to the CV page and clicking "Sök Jobb" navigates to the Job page. (Red)
-- [ ] **Micro-Step 6.4**: Create stub components for `Home.jsx`, `JobSearch.jsx`, and `CVManager.jsx` and configure routes to pass the navigation test. (Green)
+
+- [x] **Micro-Step 6.3**: Write a test verifying that clicking on "CV" navigates to the CV page and clicking "Sök Jobb" navigates to the Job page. (Green)
+- [x] **Micro-Step 6.4**: Create stub components for `Home.jsx`, `JobSearch.jsx`, and `CVManager.jsx` and configure routes to pass the navigation test. (Green)
 
 ## 💼 Phase 7: Real Job Search Integration (Arbetsförmedlingen API)
 

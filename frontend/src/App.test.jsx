@@ -27,9 +27,11 @@ describe("App (smoke test)", () => {
     // Rendera App-komponenten
     render(<App />);
 
-    // Förväntar att rubriken finns på sidan (sök med RegExp)
-    // Vi använder getByText - om texten inte finns kommer testet att misslyckas.
-    const heading = screen.getByText(/Job Application Accelerator/i);
+    // Förväntar att huvudrubriken (h1) finns på sidan
+    const heading = screen.getByRole("heading", {
+      name: /Job Application Accelerator/i,
+      level: 1,
+    });
     expect(heading).toBeTruthy();
   });
 });
@@ -49,8 +51,10 @@ describe("App (integrationstest: hämtar jobb)", () => {
       Promise.resolve({ ok: true, json: async () => fakeJobs }),
     );
 
-    // Rendera komponenten
+    // Rendera komponenten och navigera till Job-sidan
     render(<App />);
+    const jobsLink = screen.getByRole("link", { name: /Sök Jobb/i });
+    fireEvent.click(jobsLink);
 
     // Hitta Job List Area-sektionen och sök efter jobbens titlar inom sektionen
     const sectionHeading = await screen.findByRole("heading", {
@@ -97,8 +101,10 @@ describe("App (integrationstest: Select & Tailor)", () => {
       return Promise.resolve({ ok: false, status: 404 });
     });
 
-    // Rendera App och vänta tills jobben visas
+    // Rendera App och navigera till Job-sidan
     render(<App />);
+    const jobsLink = screen.getByRole("link", { name: /Sök Jobb/i });
+    fireEvent.click(jobsLink);
     await screen.findByText(/Frontend Engineer/i);
 
     // Klicka på den första "Select & Tailor"-knappen
@@ -126,5 +132,28 @@ describe("App (routing/navbar)", () => {
     expect(screen.getByText(/Home/i)).toBeTruthy();
     expect(screen.getByText(/Sök Jobb/i)).toBeTruthy();
     expect(screen.getByText(/^CV$/i)).toBeTruthy();
+  });
+});
+
+// Navigationstest (Micro-Step 6.3)
+// Testet kontrollerar navigationen: klicka på "CV" och förväntar sig att CV-sidan
+// visar texten "Ladda upp ditt CV", sedan klicka på "Sök Jobb" och kontrollera
+// att jobblistan visas igen.
+describe("App (routing/navigation)", () => {
+  test("navigerar till CV och tillbaka till Sök Jobb", async () => {
+    // Rendera App-komponenten (innefattar BrowserRouter och Navbar)
+    render(<App />);
+
+    // Klicka på länken 'CV' i Navbaren
+    const cvLink = screen.getByRole("link", { name: /CV/i });
+    fireEvent.click(cvLink);
+
+    // Förväntar att CV-sidan visar texten "Ladda upp ditt CV" (kommer vara rött tills sidan implementeras)
+    expect(await screen.findByText(/Ladda upp ditt CV/i)).toBeTruthy();
+
+    // Klicka på 'Sök Jobb' och verifiera att jobblistan visas igen
+    const jobsLink = screen.getByText(/Sök Jobb/i);
+    fireEvent.click(jobsLink);
+    expect(await screen.findByText(/Job List Area/i)).toBeTruthy();
   });
 });
