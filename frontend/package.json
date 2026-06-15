@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
     "@babel/preset-react": "^7.29.7",
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -35,5 +36,23 @@
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "vite": "^8.0.12"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[tj]sx?$": "babel-jest"
+    },
+    "testEnvironment": "jsdom",
+    "extensionsToTreatAsEsm": [
+      ".jsx"
+    ],
+    "globals": {
+      "babel-jest": {
+        "useESM": true
+      }
+    },
+    "moduleNameMapper": {
+      "\\\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\\\.(gif|ttf|eot|svg|png)$": "<rootDir>/__mocks__/fileMock.js"
+    }
   }
 }
