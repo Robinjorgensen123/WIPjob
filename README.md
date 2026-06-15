@@ -29,6 +29,16 @@ Micro-Step 11.2: Frontend UI-överhalning för `JobSearch`.
 - Använder Tailwind-klasser för moderna skuggor, rounded-corners och responsiv layout.
 - Enhetstester (`frontend/src/pages/JobSearch.test.jsx`) verifierar sökfält, status-tags och modal (R->G enligt TDD-flödet).
 
+Micro-Step 11.3: Slutgiltigt end-to-end smoke-test (frontend).
+
+- En end-to-end smoke-test körs mot frontendens routing och `JobSearch`-flöde, verifierar navigation, att det dynamiska CV:t injiceras från `localStorage` till `POST /api/generate-cv`, och att användaren får korrekt UI-feedback (loading, success eller fel). Testen använder jest + testing-library och mockar nätverksanrop.
+
+Micro-Step 11.4: Global styling och polering.
+
+- Global CSS och Tailwind-variabler finjusterade för konsekvent spacing, färgschema och responsivitet.
+- Felmeddelanden förbättrade och centraliserade; UI visar användarvänliga svenskspråkiga meddelanden vid nätverksfel eller tomt CV.
+- Små visuella förbättringar applicerade i `src/index.css` och komponenters Tailwind-klasser.
+
 ### ?? Frontend & UI
 
 _Väntar på Phase 5..._

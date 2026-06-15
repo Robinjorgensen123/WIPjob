@@ -56,9 +56,10 @@ describe("App (integrationstest: hämtar jobb)", () => {
     const jobsLink = screen.getByRole("link", { name: /Sök Jobb/i });
     fireEvent.click(jobsLink);
 
-    // Hitta Job List Area-sektionen och sök efter jobbens titlar inom sektionen
+    // Hitta Job-list-sektionen (ny rubrik på svenska: "Jobb") och sök efter jobbens titlar inom sektionen
     const sectionHeading = await screen.findByRole("heading", {
-      name: /Job List Area/i,
+      // Uppdaterad för att matcha nya UI-texten
+      name: /Jobb/i,
     });
     const section = sectionHeading.closest("section") || document.body;
     const utils = within(section);
@@ -111,8 +112,15 @@ describe("App (integrationstest: Select & Tailor)", () => {
     const buttons = await screen.findAllByText(/Select & Tailor/i);
     fireEvent.click(buttons[0]);
 
-    // Verifiera att det genererade brevet visas i Tailored CV Area
-    await screen.findByText(/Detta är ett genererat brev för testet/i);
+    // Verifiera att det genererade brevet visas i Tailored CV Area.
+    // Använd `within` för att scoped sökning i den dedikerade `aside`-sektionen
+    // så vi undviker dubbelmatch mot modalens innehåll.
+    const asideHeading = await screen.findByRole("heading", {
+      name: /Tailored CV \/ Cover Letter Area/i,
+    });
+    const aside = asideHeading.closest("aside") || document.body;
+    const asideUtils = within(aside);
+    await asideUtils.findByText(/Detta är ett genererat brev för testet/i);
 
     // Återställ fetch
     global.fetch = originalFetch;
@@ -154,6 +162,7 @@ describe("App (routing/navigation)", () => {
     // Klicka på 'Sök Jobb' och verifiera att jobblistan visas igen
     const jobsLink = screen.getByText(/Sök Jobb/i);
     fireEvent.click(jobsLink);
-    expect(await screen.findByText(/Job List Area/i)).toBeTruthy();
+    // Uppdaterad kontroll: leta efter den svenska rubriken 'Jobb'
+    expect(await screen.findByRole("heading", { name: /Jobb/i })).toBeTruthy();
   });
 });
