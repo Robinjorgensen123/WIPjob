@@ -70,7 +70,9 @@ Before checking a box, Copilot must verify:
 - [x] **Micro-Step 7.1**: Update backend tests to mock Arbetsförmedlingen's API for a focused search on "JavaScript". (Green)
 
 - [x] **Micro-Step 7.2**: Implement the API fetching gateway in `backend/server.js` to replace the 5 mock jobs and pass the backend tests. (Green)
-- [ ] **Micro-Step 7.3**: Write a frontend integration test in `JobSearch.test.jsx` ensuring that real API fields (like company name and description) render correctly in the list. (Red)
+- [x] **Micro-Step 7.3**: Write a frontend integration test in `JobSearch.test.jsx` ensuring that real API fields (like company name and description) render correctly in the list. (Green)
+ - [x] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
+
 - [ ] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
 
 ## 📄 Phase 8: Dynamic CV Upload & AI Tailoring
