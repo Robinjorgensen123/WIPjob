@@ -87,8 +87,8 @@
 
 ## 🤖 Phase 10: Production AI Integration (Un-mocking the AI)
 
-- [ ] **Micro-Step 10.1**: Write an integration test for `POST /api/generate-cv` that ensures a real system prompt and payload are formatted properly for the official OpenAI/Anthropic SDK wrapper (no basic mocks). (Red)
-- [ ] **Micro-Step 10.2**: Replace the hardcoded mock responses in `backend/server.js` with the real AI SDK completion logic using environment API keys. (Green)
+- [x] **Micro-Step 10.1**: Write an integration test for `POST /api/generate-cv` that ensures a real system prompt and payload are formatted properly for the official OpenAI/Anthropic SDK wrapper (no basic mocks). (Green)
+- [x] **Micro-Step 10.2**: Replace the hardcoded mock responses in `backend/server.js` with the real AI SDK completion logic using environment API keys. (Green)
 
 ---
 

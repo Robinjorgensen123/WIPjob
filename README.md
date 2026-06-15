@@ -17,6 +17,12 @@ för en fullstack JavaScript-utvecklare så att resume-testet kan gå grönt.
 Micro-Step 3.2: Implementerade `GET /api/jobs` i `backend/server.js`.
 Endpointen returnerar en hårdkodad array med 5 fiktiva juniorjobb (fält: `id`, `title`, `company`, `description`) så backend-smoke-testet för jobb-API:t går grönt.
 
+Micro-Step 10.2: Implementerade produktionellt AI-SDK-anrop i `backend/server.js`.
+
+- `POST /api/generate-cv` accepterar nu både `jobDescription` och `userCv` i request-body.
+- Servern bygger en svensk `system`-prompt och en `user`-prompt som injicerar användarens CV och jobbannonsen, och anropar `openai.chat.completions.create()` med dessa meddelanden.
+- Testerna inkluderar ett integrationstest som spionerar på SDK-anropet för att säkerställa att `userCv` levereras korrekt till modellen.
+
 ### ?? Frontend & UI
 
 _Väntar på Phase 5..._
