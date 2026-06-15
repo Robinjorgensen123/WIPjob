@@ -23,10 +23,21 @@ function App() {
   async function handleSelectJob(jobDescription) {
     try {
       setIsGenerating(true);
+      // Hämta användarens sparade CV från localStorage om det finns.
+      // Vi fångar eventuella fel (t.ex. i testmiljöer) och använder tom sträng som fallback.
+      let userCv = "";
+      try {
+        userCv = localStorage.getItem("user_cv") || "";
+      } catch (e) {
+        // Ignorera localStorage-fel i testmiljö
+      }
+
+      // Skicka både jobbets beskrivning och det dynamiska användar-CV:t
+      // till backend så AI:n kan använda användarens faktiska CV vid generering.
       const res = await fetch("/api/generate-cv", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobDescription }),
+        body: JSON.stringify({ jobDescription, userCv }),
       });
       if (!res.ok) throw new Error("Network response was not ok");
       const data = await res.json();

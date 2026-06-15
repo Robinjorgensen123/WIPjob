@@ -71,8 +71,8 @@
 
 - [x] **Micro-Step 8.1**: Write a frontend test for `CVManager.jsx` asserting that a user can upload/paste a CV text and see a success indicator. (Green)
 - [x] **Micro-Step 8.2**: Implement state/local storage or a backend save for the uploaded CV in `CVManager.jsx`. (Green)
-- [ ] **Micro-Step 8.3**: Write an end-to-end integration test asserting that clicking "Select & Tailor" sends the current localStorage CV to the API backend instead of using static fallbacks. (Red)
-- [ ] **Micro-Step 8.4**: Wire up the AI trigger button in JobSearch.jsx to fetch the dynamic CV from localStorage and complete the full AI pipeline. (Green)
+- [x] **Micro-Step 8.3**: Write an end-to-end integration test asserting that clicking "Select & Tailor" sends the current localStorage CV to the API backend instead of using static fallbacks. (Green)
+- [x] **Micro-Step 8.4**: Wire up the AI trigger button in JobSearch.jsx to fetch the dynamic CV from localStorage and complete the full AI pipeline. (Green)
 
 ---
 
