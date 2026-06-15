@@ -217,24 +217,34 @@ app.get("/api/jobs", async (req, res) => {
 // Kommentaren och prompten är skrivna på svenska enligt instruktion.
 app.post("/api/generate-cv", async (req, res) => {
   try {
-    const { jobDescription } = req.body || {};
+    // Hämta både jobDescription och userCv från request-body.
+    const { jobDescription, userCv } = req.body || {};
+
+    // Enkel validering: jobDescription bör vara en sträng.
     if (!jobDescription || typeof jobDescription !== "string") {
       return res
         .status(400)
         .json({ error: "Missing or invalid jobDescription" });
     }
 
-    // Systemprompt: instruera AI att agera som en erfaren teknisk rekryterare
-    // och matcha jobbannonsen mot kandidatens profil, skills och källa i CV:t.
-    const systemPrompt = `Du är en erfaren teknisk rekryterare som får i uppdrag att matcha en jobbannons mot en kandidats CV. Kandidaten beskrivs nedan. Ge två saker i strikt JSON-format: 1) "coverLetter": ett professionellt, koncist och målgruppsanpassat personligt brev på svenska (max ~2200 tecken) som förklarar varför kandidaten är lämplig för den angivna tjänsten; 2) "keyMatches": en array av korta strängar som listar de viktigaste matchande kompetenserna eller erfarenheterna (t.ex. "React", "Module Federation", "CI/CD") och varför de är relevanta (kort). Använd endast informationen i kandidatprofilen nedan — hitta matchningar mellan jobbannonsens krav och kandidatens 'profile', 'skills' och 'experience' (och 'raw' om nödvändigt). Returnera endast giltig JSON (ingen annan text).`;
+    // Systemprompt på svenska: instruera modellen att agera som rekryterare
+    // och returnera strikt JSON med coverLetter och keyMatches.
+    const systemPrompt = `Du är en erfaren teknisk rekryterare. Utifrån den angivna jobbannonsen och kandidatens CV, skapa två fält i strikt JSON: 1) \"coverLetter\": ett professionellt, koncist och målgruppsanpassat personligt brev på svenska (max ~2200 tecken) som förklarar varför kandidaten är lämplig; 2) \"keyMatches\": en array med korta strängar som listar de viktigaste matchande kompetenserna och varför de är relevanta. Använd endast information som finns i kandidatens CV och jobbannonsen. Returnera endast giltig JSON utan förklarande text.`;
 
-    // Bygg meddelandeflödet för API-anropet
-    const userContent = `Job description:\n${jobDescription}\n\nCandidate CV:\nProfile:\n${myResume.profile}\n\nSkills:\n${myResume.skills}\n\nExperience:\n${myResume.experience}\n`;
+    // Bygg user-meddelandet och injicera dynamiskt `userCv` och `jobDescription`.
+    // Vi använder `userCv` om det finns, annars faller vi tillbaka till den lokala
+    // `myResume`-filen så att endpointen fortfarande fungerar utanför test.
+    const candidateText =
+      userCv && typeof userCv === "string"
+        ? userCv
+        : `Profile:\n${myResume.profile}\n\nSkills:\n${myResume.skills}\n\nExperience:\n${myResume.experience}`;
+
+    const userContent = `Job description:\n${jobDescription}\n\nCandidate CV:\n${candidateText}`;
 
     let assistantText = null;
 
-    // Om vi har en giltig OpenAI-nyckel, försök att använda SDK:n.
-    if (process.env.OPENAI_API_KEY) {
+    // Anropa OpenAI SDK:t om klienten är initierad.
+    if (openai) {
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
@@ -248,21 +258,19 @@ app.post("/api/generate-cv", async (req, res) => {
       assistantText = completion?.choices?.[0]?.message?.content || null;
     }
 
-    // Om vi fick svar från OpenAI, försök parsning till JSON.
+    // Försök parsa svaret från AI:n till JSON om vi fick något.
     if (assistantText) {
       try {
-        // Försök direkt JSON-parse (API:et förväntas returnera ren JSON)
         const parsed = JSON.parse(assistantText);
         return res.status(200).json(parsed);
       } catch (err) {
-        // Om svaret inte är exakt JSON, extrahera JSON-objektet ur texten
         const match = assistantText.match(/\{[\s\S]*\}/);
         if (match) {
           try {
             const parsed = JSON.parse(match[0]);
             return res.status(200).json(parsed);
           } catch (err2) {
-            // fallthrough to local fallback
+            // Fortsätt till fallback om parsing misslyckas
           }
         }
       }
