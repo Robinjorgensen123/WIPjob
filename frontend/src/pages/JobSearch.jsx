@@ -64,16 +64,25 @@ export default function JobSearch({ onSelectJob }) {
       const res = await fetch("/api/generate-cv", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobDescription: job.description || job.title, userCv: localStorage.getItem("user_cv") || "" }),
+        body: JSON.stringify({
+          jobDescription: job.description || job.title,
+          userCv: localStorage.getItem("user_cv") || "",
+        }),
       });
       if (res.ok) {
         const json = await res.json();
         setModalContent(json.coverLetter || JSON.stringify(json));
       } else {
-        setModalContent("Kunde inte generera brev (fallback).\n\n" + (job.description || job.title));
+        setModalContent(
+          "Kunde inte generera brev (fallback).\n\n" +
+            (job.description || job.title),
+        );
       }
     } catch (err) {
-      setModalContent("Fel vid anrop; visar lokal fallback.\n\n" + (job.description || job.title));
+      setModalContent(
+        "Fel vid anrop; visar lokal fallback.\n\n" +
+          (job.description || job.title),
+      );
     }
 
     setModalOpen(true);
@@ -102,16 +111,24 @@ export default function JobSearch({ onSelectJob }) {
       ) : (
         <ul className="space-y-4">
           {filtered.map((job) => (
-            <li key={job.id} className="bg-white p-4 rounded-lg shadow-sm flex items-start justify-between" role="listitem">
+            <li
+              key={job.id}
+              className="bg-white p-4 rounded-lg shadow-sm flex items-start justify-between"
+              role="listitem"
+            >
               <div>
                 <div className="text-lg font-medium">{job.title}</div>
                 <div className="text-sm text-gray-500">{job.company}</div>
-                <div className="mt-2 text-sm text-gray-700">{job.description}</div>
+                <div className="mt-2 text-sm text-gray-700">
+                  {job.description}
+                </div>
               </div>
 
               <div className="flex flex-col items-end gap-3">
                 {/* Status-chip */}
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusClass(job.status)}`}>
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusClass(job.status)}`}
+                >
                   {job.status || "Ej sökt"}
                 </span>
 
@@ -137,16 +154,27 @@ export default function JobSearch({ onSelectJob }) {
         aria-hidden={!modalOpen}
         className={`fixed inset-0 flex items-center justify-center z-50 ${modalOpen ? "" : "pointer-events-none"}`}
       >
-        <div className={`absolute inset-0 bg-black/40 transition-opacity ${modalOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setModalOpen(false)} />
+        <div
+          className={`absolute inset-0 bg-black/40 transition-opacity ${modalOpen ? "opacity-100" : "opacity-0"}`}
+          onClick={() => setModalOpen(false)}
+        />
 
-        <div className={`relative bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 transform transition-transform ${modalOpen ? "scale-100" : "scale-95"}`}>
+        <div
+          className={`relative bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 transform transition-transform ${modalOpen ? "scale-100" : "scale-95"}`}
+        >
           <div className="flex justify-between items-start gap-4">
             <h3 className="text-lg font-semibold">Genererat personligt brev</h3>
-            <button className="text-gray-500 hover:text-gray-700" onClick={() => setModalOpen(false)}>Stäng</button>
+            <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setModalOpen(false)}
+            >
+              Stäng
+            </button>
           </div>
 
           <div className="mt-4 whitespace-pre-line text-sm text-gray-800">
-            {modalContent || "Här visas det genererade brevet när du har skräddarsytt en ansökan."}
+            {modalContent ||
+              "Här visas det genererade brevet när du har skräddarsytt en ansökan."}
           </div>
         </div>
       </div>
