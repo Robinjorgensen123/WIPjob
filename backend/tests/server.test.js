@@ -40,3 +40,71 @@ describe("GET /api/jobs", () => {
     expect(first).toHaveProperty("description");
   });
 });
+
+// === Phase 7: Real Job Search Integration (Arbetsförmedlingen) ===
+// Micro-Step 7.1: Test som verifierar att servern gör ett externt anrop
+// till Arbetsförmedlingens JobSearch API (sökord: "JavaScript") och mappar
+// om det externa svaret till vårt frontend-vänliga format.
+describe("GET /api/jobs (Arbetsförmedlingen integration - mock)", () => {
+  // Rensa och återställ mocks efter varje test
+  afterEach(() => {
+    jest.restoreAllMocks();
+    // Ta bort global.fetch så andra tester inte påverkas
+    try {
+      delete global.fetch;
+    } catch (e) {}
+  });
+
+  test("bör göra ett externt anrop med sökord 'JavaScript' och returnera mappad array", async () => {
+    // --- Arrange ---
+    // Simulera Arbetsförmedlingens API-svarstruktur. Vi antar en wrapper
+    // med en lista under t.ex. `hits` där varje item har headline,
+    // employer.name och description.text.
+    const mockExternal = {
+      hits: [
+        {
+          id: "af-1",
+          headline: "Frontend Engineer",
+          employer: { name: "Acme Corp" },
+          description: { text: "Utveckla webbapplikationer med React och JS" },
+        },
+      ],
+    };
+
+    // Skapa en global.fetch mock så vi kan spy:a på anropet.
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockExternal,
+    });
+
+    // --- Act ---
+    const res = await request(app).get("/api/jobs");
+
+    // --- Assert ---
+    // Förväntar att servern försökte hämta data externt
+    expect(global.fetch).toHaveBeenCalled();
+
+    // Kontrollera att URL eller query innehåller 'JavaScript' (sökordet)
+    const calledUrl = global.fetch.mock.calls[0][0];
+    expect(String(calledUrl)).toMatch(/JavaScript/i);
+
+    // Servern ska returnera 200 och en array
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+
+    // Kontrollera att mappningen från extern struktur till vårt format sker
+    // Vi förväntar oss fälten: id, title, company, description
+    expect(res.body.length).toBeGreaterThan(0);
+    const first = res.body[0];
+    expect(first).toHaveProperty("id");
+    expect(first).toHaveProperty("title");
+    expect(first).toHaveProperty("company");
+    expect(first).toHaveProperty("description");
+
+    // Kontrollera att värdena kommer från mocken
+    expect(first.id).toBe("af-1");
+    expect(first.title).toMatch(/Frontend Engineer/i);
+    expect(first.company).toMatch(/Acme Corp/i);
+    expect(first.description).toMatch(/React/i);
+  });
+});

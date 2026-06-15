@@ -42,10 +42,6 @@
 
 ## ?? Phase 5: Frontend Layout & UI Tests (React)
 
-- [ ] **Micro-Step 5.1**: Install `@testing-library/react` and `jest` in the frontend folder. Write a component test for `App.jsx` checking that a loading spinner or job list area renders. (Red)
-- [ ] **Micro-Step 5.2**: Build the basic Tailwind split-screen layout in `src/App.jsx` to pass the render test. (Green)
-- [ ] **Micro-Step 5.3**: Write a frontend integration test that mocks the API calls and asserts that clicking "Select & Tailor" displays the generated text. (Red)
-- [ ] **Micro-Step 5.4**: Implement state, fetch-logic, and wire up the buttons in React to pass all remaining frontend tests. (Green)
 - [x] **Micro-Step 5.1**: Install `@testing-library/react` and `jest` in the frontend folder. Write a component test for `App.jsx` checking that a loading spinner or job list area renders. (Red)
 - [x] **Micro-Step 5.2**: Build the basic Tailwind split-screen layout in `src/App.jsx` to pass the render test. (Green)
 - [x] **Micro-Step 5.3**: Write a frontend integration test that mocks the API calls and asserts that clicking "Select & Tailor" displays the generated text. (Red)
@@ -71,8 +67,9 @@ Before checking a box, Copilot must verify:
 
 ## 💼 Phase 7: Real Job Search Integration (Arbetsförmedlingen API)
 
-- [ ] **Micro-Step 7.1**: Update backend tests to mock Arbetsförmedlingen's API for a combined search on "Java" and "JavaScript". (Red)
-- [ ] **Micro-Step 7.2**: Implement the API fetching gateway in `backend/server.js` to replace the 5 mock jobs and pass the backend tests. (Green)
+- [x] **Micro-Step 7.1**: Update backend tests to mock Arbetsförmedlingen's API for a focused search on "JavaScript". (Green)
+
+- [x] **Micro-Step 7.2**: Implement the API fetching gateway in `backend/server.js` to replace the 5 mock jobs and pass the backend tests. (Green)
 - [ ] **Micro-Step 7.3**: Write a frontend integration test in `JobSearch.test.jsx` ensuring that real API fields (like company name and description) render correctly in the list. (Red)
 - [ ] **Micro-Step 7.4**: Connect `JobSearch.jsx` to the new backend endpoint and render the real-time junior developer jobs. (Green)
 

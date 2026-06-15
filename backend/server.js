@@ -33,48 +33,93 @@ app.get("/", (req, res) => {
 // Detta är "minsta möjliga" implementation för att göra Micro-Step 3.1/3.2
 // grön: ett 200-svar med en array av jobbobjekt som innehåller id, title,
 // company och description.
-app.get("/api/jobs", (req, res) => {
-  // Hårdkodad array med 5 fiktiva, realistiska jobbannonser
-  const jobs = [
-    {
-      id: "job-1",
-      title: "Junior React-utvecklare",
-      company: "Nordic Web Solutions",
-      description:
-        "Arbeta i ett team med React och TypeScript för att bygga användargränssnitt. Grundläggande kunskaper i HTML/CSS krävs.",
-    },
-    {
-      id: "job-2",
-      title: "Junior Fullstack JavaScript-utvecklare",
-      company: "Startup Labs",
-      description:
-        "Bygg REST-API:er i Node.js/Express och koppla dem till en React-front. Erfarenhet av Git och testning är meriterande.",
-    },
-    {
-      id: "job-3",
-      title: "Frontend-utvecklare (React/TypeScript)",
-      company: "GreenTech Agency",
-      description:
-        "Fokus på komponentutveckling i React med TypeScript. Arbete med designsystem och tillgänglighet.",
-    },
-    {
-      id: "job-4",
-      title: "Junior JavaScript-utvecklare",
-      company: "eComify",
-      description:
-        "Underhåll och förbättra befintliga frontendlösningar. Grundläggande Node.js-kunskaper används för små backend-uppgifter.",
-    },
-    {
-      id: "job-5",
-      title: "Junior Frontend Engineer",
-      company: "PixelWorks",
-      description:
-        "Jobba med moderna verktyg (Vite, React, Tailwind) för att leverera snabba och responsiva webapplikationer.",
-    },
-  ];
+app.get("/api/jobs", async (req, res) => {
+  // Försök först att hämta riktiga jobb från Arbetsförmedlingens öppna JobSearch-API.
+  // Om anropet lyckas, mappa om den externa strukturen till vårt frontend-vänliga format.
+  // Om något går fel (t.ex. nätverksfel eller ändrad struktur), fall tillbaka till
+  // den lokala hårdkodade listan så appen fortsätter fungera.
+  try {
+    // Exempel-sök-URL mot JobTechs öppna jobsearch API för JavaScript
+    const searchUrl = "https://jobsearch.api.jobtechdev.se/search?q=javascript";
 
-  // Returnera listan som JSON med status 200
-  res.status(200).json(jobs);
+    // Gör ett fetch-anrop. I testmiljö kan `global.fetch` vara mockad av jest.
+    const externalRes = await fetch(searchUrl, {
+      headers: {
+        // Ange en enkel User-Agent ifall API:et kräver det
+        "User-Agent": "job-app-accelerator/1.0 (+https://example.com)",
+      },
+    });
+
+    if (!externalRes.ok) throw new Error("External API error");
+
+    const externalJson = await externalRes.json();
+
+    // Extern struktur kan variera; vanliga fält är `hits` eller `ads`.
+    const hits =
+      externalJson.hits || externalJson.ads || externalJson.results || [];
+
+    // Mappa varje extern annons till formatet { id, title, company, description }
+    const mapped = hits.map((item) => {
+      const id = item.id || item.adId || item.advertisementId || null;
+      const title = item.headline || item.title || "Okänd titel";
+      const company =
+        (item.employer && item.employer.name) ||
+        item.company ||
+        "Okänt företag";
+      const description =
+        (item.description && item.description.text) || item.description || "";
+      return { id, title, company, description };
+    });
+
+    return res.status(200).json(mapped);
+  } catch (err) {
+    /* eslint-disable no-console */
+    console.warn(
+      "Felläge mot externt API för /api/jobs, använder lokal fallback:",
+      err.message,
+    );
+
+    // Lokal fallback: hårdkodad array med 5 jobb (samma som tidigare)
+    const jobs = [
+      {
+        id: "job-1",
+        title: "Junior React-utvecklare",
+        company: "Nordic Web Solutions",
+        description:
+          "Arbeta i ett team med React och TypeScript för att bygga användargränssnitt. Grundläggande kunskaper i HTML/CSS krävs.",
+      },
+      {
+        id: "job-2",
+        title: "Junior Fullstack JavaScript-utvecklare",
+        company: "Startup Labs",
+        description:
+          "Bygg REST-API:er i Node.js/Express och koppla dem till en React-front. Erfarenhet av Git och testning är meriterande.",
+      },
+      {
+        id: "job-3",
+        title: "Frontend-utvecklare (React/TypeScript)",
+        company: "GreenTech Agency",
+        description:
+          "Fokus på komponentutveckling i React med TypeScript. Arbete med designsystem och tillgänglighet.",
+      },
+      {
+        id: "job-4",
+        title: "Junior JavaScript-utvecklare",
+        company: "eComify",
+        description:
+          "Underhåll och förbättra befintliga frontendlösningar. Grundläggande Node.js-kunskaper används för små backend-uppgifter.",
+      },
+      {
+        id: "job-5",
+        title: "Junior Frontend Engineer",
+        company: "PixelWorks",
+        description:
+          "Jobba med moderna verktyg (Vite, React, Tailwind) för att leverera snabba och responsiva webapplikationer.",
+      },
+    ];
+
+    return res.status(200).json(jobs);
+  }
 });
 
 // POST /api/generate-cv
