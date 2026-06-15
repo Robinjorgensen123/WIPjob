@@ -112,3 +112,19 @@ describe("App (integrationstest: Select & Tailor)", () => {
     global.fetch = originalFetch;
   });
 });
+
+// Routing/test för Navbar (Micro-Step 6.1)
+// Testet kontrollerar att en framtida Navbar renderas med länkarna
+// "Home", "Sök Jobb" och "CV". Testet skrivs först och förväntas
+// misslyckas (Red) eftersom router/navbar ännu inte är implementerad.
+describe("App (routing/navbar)", () => {
+  test("renderar Navbar med länkar: Home, Sök Jobb och CV", () => {
+    // Rendera App-komponenten
+    render(<App />);
+
+    // Förväntar att navigationstexterna finns (kommer vara rött tills Navbar implementeras)
+    expect(screen.getByText(/Home/i)).toBeTruthy();
+    expect(screen.getByText(/Sök Jobb/i)).toBeTruthy();
+    expect(screen.getByText(/^CV$/i)).toBeTruthy();
+  });
+});

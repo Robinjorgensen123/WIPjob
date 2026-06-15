@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
+import Navbar from "./Navbar";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
@@ -60,78 +62,83 @@ function App() {
   // Enkel layout med Tailwind-klassnamn (kräver Tailwind i projektet för full styling).
   // Delar upp vyen i två kolumner på större skärmar och i staplade sektioner på små skärmar.
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* Header med huvudrubrik */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold leading-tight">
-            Job Application Accelerator
-          </h1>
-        </div>
-      </header>
-
-      {/* Split-screen layout: vänster = jobblista, höger = personligt brev */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Vänstersida: Job List Area */}
-            <section className="lg:w-1/2 bg-white rounded-lg shadow p-6">
-              {/* Kommentar: här kommer en lista med jobbannonser */}
-              <h2 className="text-xl font-semibold mb-4">Job List Area</h2>
-
-              {/* Rendera jobben när de är hämtade från API:et */}
-              {jobs.length === 0 ? (
-                <p className="text-sm text-gray-500">
-                  Här listas tillgängliga jobb (placeholder).
-                </p>
-              ) : (
-                <ul>
-                  {jobs.map((job) => (
-                    <li key={job.id} className="mb-4">
-                      {/* Visa jobbtitel och företag så tester kan hitta dem */}
-                      <div className="text-lg font-medium">{job.title}</div>
-                      <div className="text-sm text-gray-500">{job.company}</div>
-                      {/* Select & Tailor-knapp som triggar generate-cv POST-anrop */}
-                      <button
-                        className="mt-2 inline-block bg-green-500 text-white px-3 py-1 rounded"
-                        onClick={() =>
-                          handleSelectJob(`${job.title} at ${job.company}`)
-                        }
-                      >
-                        Select & Tailor
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-
-            {/* Högersida: Tailored CV / Cover Letter Area */}
-            <aside className="lg:w-1/2 bg-white rounded-lg shadow p-6">
-              {/* Kommentar: här visas det genererade personliga brevet */}
-              <h2 className="text-xl font-semibold mb-4">
-                Tailored CV / Cover Letter Area
-              </h2>
-              {/* Visa en laddningsindikator vid generering */}
-              {isGenerating && (
-                <p className="text-sm text-gray-500">Genererar...</p>
-              )}
-
-              {/* Om vi har ett genererat brev, rendera det här */}
-              {generatedLetter ? (
-                <div className="prose">
-                  <p>{generatedLetter}</p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">
-                  Det här området visar det skräddarsydda brevet.
-                </p>
-              )}
-            </aside>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <Navbar />
+        {/* Header med huvudrubrik */}
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl font-bold leading-tight">
+              Job Application Accelerator
+            </h1>
           </div>
-        </div>
-      </main>
-    </div>
+        </header>
+
+        {/* Split-screen layout: vänster = jobblista, höger = personligt brev */}
+        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Vänstersida: Job List Area */}
+              <section className="lg:w-1/2 bg-white rounded-lg shadow p-6">
+                {/* Kommentar: här kommer en lista med jobbannonser */}
+                <h2 className="text-xl font-semibold mb-4">Job List Area</h2>
+
+                {/* Rendera jobben när de är hämtade från API:et */}
+                {jobs.length === 0 ? (
+                  <p className="text-sm text-gray-500">
+                    Här listas tillgängliga jobb (placeholder).
+                  </p>
+                ) : (
+                  <ul>
+                    {jobs.map((job) => (
+                      <li key={job.id} className="mb-4">
+                        {/* Visa jobbtitel och företag så tester kan hitta dem */}
+                        <div className="text-lg font-medium">{job.title}</div>
+                        <div className="text-sm text-gray-500">
+                          {job.company}
+                        </div>
+                        {/* Select & Tailor-knapp som triggar generate-cv POST-anrop */}
+                        <button
+                          className="mt-2 inline-block bg-green-500 text-white px-3 py-1 rounded"
+                          onClick={() =>
+                            handleSelectJob(`${job.title} at ${job.company}`)
+                          }
+                        >
+                          Select & Tailor
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              {/* Högersida: Tailored CV / Cover Letter Area */}
+              <aside className="lg:w-1/2 bg-white rounded-lg shadow p-6">
+                {/* Kommentar: här visas det genererade personliga brevet */}
+                <h2 className="text-xl font-semibold mb-4">
+                  Tailored CV / Cover Letter Area
+                </h2>
+                {/* Visa en laddningsindikator vid generering */}
+                {isGenerating && (
+                  <p className="text-sm text-gray-500">Genererar...</p>
+                )}
+
+                {/* Om vi har ett genererat brev, rendera det här */}
+                {generatedLetter ? (
+                  <div className="prose">
+                    <p>{generatedLetter}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Det här området visar det skräddarsydda brevet.
+                  </p>
+                )}
+              </aside>
+            </div>
+          </div>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }
 
