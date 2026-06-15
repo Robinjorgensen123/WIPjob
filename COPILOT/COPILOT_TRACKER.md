@@ -77,11 +77,10 @@
 ---
 
 ## 🗄️ Phase 9: Supabase Backend Database Integration
-
-- [ ] **Micro-Step 9.1**: Write a backend test in `backend/tests/supabase.test.js` asserting that the server connection to Supabase works and returns a `200` status when checking API health. (Red)
-- [ ] **Micro-Step 9.2**: Install `@supabase/supabase-js`, set up credentials in `.env`, and initialize the Supabase client in `backend/server.js` to pass the connection test. (Green)
-- [ ] **Micro-Step 9.3**: Write a backend test verifying that `POST /api/tracked-jobs` successfully saves a job's status (e.g., "Saved", "Applied", "Tailored") to a Supabase database table. (Red)
-- [ ] **Micro-Step 9.4**: Implement the Supabase table storage logic in `server.js` to persist job tracking metrics across sessions. (Green)
+ - [x] **Micro-Step 9.1**: Write a backend test in `backend/tests/supabase.test.js` asserting that the server connection to Supabase works and returns a `200` status when checking API health. (Green)
+ - [x] **Micro-Step 9.2**: Install `@supabase/supabase-js`, set up credentials in `.env`, and initialize the Supabase client in `backend/server.js` to pass the connection test. (Green)
+ - [ ] **Micro-Step 9.3**: Write a backend test verifying that `POST /api/tracked-jobs` successfully saves a job's status (e.g., "Saved", "Applied", "Tailored") to a Supabase database table. (Red)
+ - [ ] **Micro-Step 9.4**: Implement the Supabase table storage logic in `server.js` to persist job tracking metrics across sessions. (Green)
 
 ---
 

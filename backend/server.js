@@ -65,6 +65,53 @@ app.get("/health", (req, res) => {
   res.status(200).json(health);
 });
 
+// POST /api/tracked-jobs
+// Tar emot jobbinformation från frontend och sparar en post i Supabase-tabellen
+// `jobs_tracked`. Vi använder den tidigare initierade `supabase`-klienten och
+// returnerar 201 Created vid lyckad insättning, annars 500 vid fel.
+app.post("/api/tracked-jobs", async (req, res) => {
+  try {
+    const { jobId, title, company, status } = req.body || {};
+
+    // Enkel validering: jobId krävs för att spåra ett jobb
+    if (!jobId) {
+      return res.status(400).json({ error: "Missing jobId" });
+    }
+
+    // Säkerställ att Supabase-klienten är initierad innan vi försöker skriva
+    if (!supabase) {
+      return res.status(500).json({ error: "Supabase client not initialized" });
+    }
+
+    // Utför insert i tabellen `jobs_tracked`. Vi mappar lokala fält till
+    // kolumnnamn i databasen (t.ex. job_id).
+    const { data, error } = await supabase
+      .from("jobs_tracked")
+      .insert([
+        {
+          job_id: jobId,
+          title,
+          company,
+          status,
+        },
+      ])
+      .select();
+
+    if (error) {
+      // eslint-disable-next-line no-console
+      console.error("Supabase insert error:", error);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    // Returnera 201 Created och den insatta raden
+    return res.status(201).json({ id: data?.[0]?.id ?? null, data });
+  } catch (err) {
+    /* eslint-disable no-console */
+    console.error("Error in /api/tracked-jobs:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // API-route: GET /api/jobs
 // Returnerar en hårdkodad lista med jobbannonser för juniora utvecklare.
 // Detta är "minsta möjliga" implementation för att göra Micro-Step 3.1/3.2
