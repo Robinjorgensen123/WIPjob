@@ -94,8 +94,8 @@
 
 ## 💎 Phase 11: Frontend UI Overhaul & Polished Design
 
-- [ ] **Micro-Step 11.1**: Write a frontend component test in `JobSearch.test.jsx` that checks for the existence of advanced UI filters (search bar, application status tags, and action modall). (Red)
-- [ ] **Micro-Step 11.2**: Revamp `JobSearch.jsx` with a modern, responsive Tailwind dashboard layout including search filters and clear tracking status chips. (Green)
+- [x] **Micro-Step 11.1**: Write a frontend component test in `JobSearch.test.jsx` that checks for the existence of advanced UI filters (search bar, application status tags, and action modall). (Green)
+- [x] **Micro-Step 11.2**: Revamp `JobSearch.jsx` with a modern, responsive Tailwind dashboard layout including search filters and clear tracking status chips. (Green)
 - [ ] **Micro-Step 11.3**: Write a final end-to-end frontend smoke test checking that navigation, dynamic CV injection, and UI feedback states function without breaking layout flow. (Red)
 - [ ] **Micro-Step 11.4**: Finalize global CSS styling, refine error messages, and ensure all application sections are responsive and polished. (Green)
 

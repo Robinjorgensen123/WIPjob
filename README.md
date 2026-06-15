@@ -23,6 +23,12 @@ Micro-Step 10.2: Implementerade produktionellt AI-SDK-anrop i `backend/server.js
 - Servern bygger en svensk `system`-prompt och en `user`-prompt som injicerar användarens CV och jobbannonsen, och anropar `openai.chat.completions.create()` med dessa meddelanden.
 - Testerna inkluderar ett integrationstest som spionerar på SDK-anropet för att säkerställa att `userCv` levereras korrekt till modellen.
 
+Micro-Step 11.2: Frontend UI-överhalning för `JobSearch`.
+
+- `JobSearch.jsx` innehåller nu ett sökfält (client-side filtrering), status-chips för varje jobb baserat på `status`-fältet, och en modal för att visa AI-genererat personligt brev.
+- Använder Tailwind-klasser för moderna skuggor, rounded-corners och responsiv layout.
+- Enhetstester (`frontend/src/pages/JobSearch.test.jsx`) verifierar sökfält, status-tags och modal (R->G enligt TDD-flödet).
+
 ### ?? Frontend & UI
 
 _Väntar på Phase 5..._
