@@ -10,7 +10,7 @@ import myResume from "./data/myResume.js";
 // OpenAI/Gemini SDK-konfiguration
 import OpenAI from "openai";
 // Resend (e-post) klient
-import Resend from "resend";
+import * as Resend from "resend";
 
 // Enkel Express-app som exporteras för testning med Supertest.
 // Kommentaren förklarar syftet på svenska enligt projektreglerna.
@@ -128,14 +128,21 @@ app.get("/api/jobs", async (req, res) => {
   // Om något går fel (t.ex. nätverksfel eller ändrad struktur), fall tillbaka till
   // den lokala hårdkodade listan så appen fortsätter fungera.
   try {
-    // Exempel-sök-URL mot JobTechs öppna jobsearch API för JavaScript
-    const searchUrl = "https://jobsearch.api.jobtechdev.se/search?q=javascript";
+    // Bestäm URL för extern jobbsökning. Vi tillåter att en miljövariabel
+    // `JOBS_API_URL` eller `ARBETSF_API_URL` anger en specifik endpoint
+    // (t.ex. Arbetsförmedlingens API). Om ingen är satt, försök JobTechs
+    // öppna jobsearch som fallback.
+    const externalApiUrl =
+      process.env.JOBS_API_URL || process.env.ARBETSF_API_URL ||
+      "https://jobsearch.api.jobtechdev.se/search?q=javascript";
 
     // Gör ett fetch-anrop. I testmiljö kan `global.fetch` vara mockad av jest.
-    const externalRes = await fetch(searchUrl, {
+    const externalRes = await fetch(externalApiUrl, {
       headers: {
         // Ange en enkel User-Agent ifall API:et kräver det
         "User-Agent": "job-app-accelerator/1.0 (+https://example.com)",
+        // Vid behov kan man ange en API-nyckel via env och skicka den här
+        ...(process.env.JOBS_API_KEY ? { Authorization: `Bearer ${process.env.JOBS_API_KEY}` } : {}),
       },
     });
 
@@ -143,20 +150,25 @@ app.get("/api/jobs", async (req, res) => {
 
     const externalJson = await externalRes.json();
 
-    // Extern struktur kan variera; vanliga fält är `hits` eller `ads`.
+    // Extern struktur kan variera; försök flera vanliga nycklar.
     const hits =
-      externalJson.hits || externalJson.ads || externalJson.results || [];
+      externalJson.hits ||
+      externalJson.ads ||
+      externalJson.results ||
+      externalJson.data?.results ||
+      externalJson.items ||
+      externalJson.results?.hits ||
+      [];
 
     // Mappa varje extern annons till formatet { id, title, company, description }
     const mapped = hits.map((item) => {
-      const id = item.id || item.adId || item.advertisementId || null;
-      const title = item.headline || item.title || "Okänd titel";
+      const id =
+        item.id || item.adId || item.advertisementId || item.urn || null;
+      const title = item.headline || item.title || item.occupation || "Okänd titel";
       const company =
-        (item.employer && item.employer.name) ||
-        item.company ||
-        "Okänt företag";
+        (item.employer && item.employer.name) || item.company || item.employerName || "Okänt företag";
       const description =
-        (item.description && item.description.text) || item.description || "";
+        (item.description && (item.description.text || item.description)) || item.summary || "";
       return { id, title, company, description };
     });
 
@@ -311,16 +323,19 @@ app.post("/api/send-email", async (req, res) => {
       return res.status(400).json({ error: "Missing or invalid coverLetter" });
     }
 
-    // Försök skapa en Resend-klient. I testmiljö kan `Resend` vara mockat
-    // som ett objekt (inte en konstruktör), därför hanterar vi båda fallen.
+    // Försök skapa en Resend-klient. Biblioteket kan exportera antingen en
+    // konstruktör som default eller ett objekt; vi hanterar båda.
     let resendClient = null;
+    const ResendLib = Resend?.default || Resend;
     if (process.env.RESEND_API_KEY) {
       try {
-        // Normalt: Resend är en konstruktör
-        resendClient = new Resend(process.env.RESEND_API_KEY);
+        resendClient =
+          typeof ResendLib === "function"
+            ? new ResendLib(process.env.RESEND_API_KEY)
+            : ResendLib;
       } catch (e) {
-        // Om mocken inte är konstruktör, använd det mockade objektet direkt
-        resendClient = Resend?.default || Resend;
+        // Fallback: om konstruktionen misslyckas, använd bibliotekets objekt
+        resendClient = ResendLib;
       }
     }
 

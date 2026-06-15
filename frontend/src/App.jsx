@@ -59,7 +59,7 @@ function App() {
         {/* Header med huvudrubrik */}
         <header className="bg-white shadow">
           <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-tight">
               Job Application Accelerator
             </h1>
           </div>
@@ -82,7 +82,7 @@ function App() {
               </section>
 
               {/* Högersida: Tailored CV / Cover Letter Area */}
-              <aside className="lg:w-1/2 bg-white rounded-lg shadow p-6">
+              <aside className="lg:w-1/2 bg-white rounded-lg shadow p-6 min-h-[220px] flex flex-col justify-center">
                 {/* Kommentar: här visas det genererade personliga brevet */}
                 <h2 className="text-xl font-semibold mb-4">
                   Tailored CV / Cover Letter Area
@@ -94,7 +94,7 @@ function App() {
 
                 {/* Om vi har ett genererat brev, rendera det här */}
                 {generatedLetter ? (
-                  <div className="prose">
+                  <div className="prose cover-letter">
                     <p>{generatedLetter}</p>
                   </div>
                 ) : (

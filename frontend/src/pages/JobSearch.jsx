@@ -109,35 +109,52 @@ export default function JobSearch({ onSelectJob }) {
       {filtered.length === 0 ? (
         <p className="text-sm text-gray-500">Inga jobb hittades.</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filtered.map((job) => (
             <li
               key={job.id}
-              className="bg-white p-4 rounded-lg shadow-sm flex items-start justify-between"
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow flex flex-col justify-between"
               role="listitem"
             >
               <div>
-                <div className="text-lg font-medium">{job.title}</div>
-                <div className="text-sm text-gray-500">{job.company}</div>
-                <div className="mt-2 text-sm text-gray-700">
-                  {job.description}
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <div className="text-lg font-semibold text-gray-900">{job.title}</div>
+                    <div className="text-sm text-gray-500">{job.company}</div>
+                  </div>
+
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusClass(job.status)}`}>
+                    {job.status || "Ej sökt"}
+                  </span>
+                </div>
+
+                <div className="mt-3 text-sm text-gray-700 max-h-24 overflow-hidden">
+                  {job.description ? job.description.slice(0, 320) + (job.description.length > 320 ? "…" : "") : "Ingen beskrivning"}
                 </div>
               </div>
 
-              <div className="flex flex-col items-end gap-3">
-                {/* Status-chip */}
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${statusClass(job.status)}`}
-                >
-                  {job.status || "Ej sökt"}
-                </span>
-
-                {/* Action-knapp som öppnar modal för AI-brevet */}
+              <div className="mt-4 flex items-center justify-end gap-3">
                 <button
-                  className="bg-indigo-600 text-white px-3 py-2 rounded-lg shadow hover:bg-indigo-700"
+                  className="text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50"
+                  onClick={() => {
+                    // TODO: implement save action (Supabase)
+                    alert('Spara funktionen är inte implementerad i denna demo');
+                  }}
+                >
+                  Spara
+                </button>
+
+                <button
+                  className="text-sm px-3 py-1.5 rounded-md border border-indigo-600 text-indigo-600 hover:bg-indigo-50"
+                >
+                  Ansök
+                </button>
+
+                <button
+                  className="bg-indigo-600 text-white px-3 py-1.5 rounded-md shadow hover:bg-indigo-700"
                   onClick={() => handleTailor(job)}
                 >
-                  Select & Tailor
+                  Skräddarsy
                 </button>
               </div>
             </li>

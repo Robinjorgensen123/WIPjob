@@ -29,6 +29,17 @@ Micro-Step 11.2: Frontend UI-överhalning för `JobSearch`.
 - Använder Tailwind-klasser för moderna skuggor, rounded-corners och responsiv layout.
 - Enhetstester (`frontend/src/pages/JobSearch.test.jsx`) verifierar sökfält, status-tags och modal (R->G enligt TDD-flödet).
 
+Jobb-API-konfiguration
+
+- Du kan peka servern mot Arbetsförmedlingens eller annan jobbsök-API genom att sätta env-variabeln `JOBS_API_URL`. Exempel:
+
+```
+JOBS_API_URL="https://api.arbetsformedlingen.se/whatever"
+JOBS_API_KEY="<optional-api-key>"
+```
+
+- Om `JOBS_API_URL` inte är satt används JobTechs öppna jobsearch som fallback. Servern försöker mappa flera vanliga fält (`hits`, `results`, `ads`, `data.results`) till frontend-formatet `{id,title,company,description}`.
+
 Micro-Step 11.3: Slutgiltigt end-to-end smoke-test (frontend).
 
 - En end-to-end smoke-test körs mot frontendens routing och `JobSearch`-flöde, verifierar navigation, att det dynamiska CV:t injiceras från `localStorage` till `POST /api/generate-cv`, och att användaren får korrekt UI-feedback (loading, success eller fel). Testen använder jest + testing-library och mockar nätverksanrop.
