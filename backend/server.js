@@ -1,7 +1,10 @@
 import express from "express";
 // Ladda miljövariabler från .env (om fil finns)
+// dotenv.config() körs här tidigt så process.env är tillgängligt för klientinitiering.
 import dotenv from "dotenv";
 dotenv.config();
+// Supabase-klient: initieras om miljövariabler finns.
+import { createClient } from "@supabase/supabase-js";
 // Importera CV-data (ES Modules-syntax enligt package.json:type = module)
 import myResume from "./data/myResume.js";
 // OpenAI/Gemini SDK-konfiguration
@@ -12,6 +15,28 @@ import Resend from "resend";
 // Enkel Express-app som exporteras för testning med Supertest.
 // Kommentaren förklarar syftet på svenska enligt projektreglerna.
 const app = express();
+
+// Initiera Supabase-klienten om nödvändiga variabler finns.
+// Detta skapar inte en aktiv nätverksanslutning i sig, men konstruerar
+// en klientinstans som kan användas av resten av applikationen.
+// Vi sätter `supabase` till `null` om variabler saknas så att servern
+// inte kastar undantag i testmiljöer.
+let supabase = null;
+if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+  // Skapar klienten med anonyma nyckeln (client-side/public key)
+  supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_ANON_KEY,
+  );
+} else {
+  // Logga en varning så att utvecklare ser att placeholders saknas
+  // under lokal utveckling. Detta påverkar inte testsuite om vi
+  // kör med riktiga miljövariabler i CI eller efter att .env uppdaterats.
+  // eslint-disable-next-line no-console
+  console.warn(
+    "Supabase-variabler saknas: SUPABASE_URL eller SUPABASE_ANON_KEY",
+  );
+}
 
 // Middleware för att parsa JSON-body i inkommande requests
 app.use(express.json());
@@ -26,6 +51,18 @@ const openai = process.env.OPENAI_API_KEY
 app.get("/", (req, res) => {
   // Svarstext används bara för manuell debugging, testen kollar statuskoden.
   res.status(200).send("OK");
+});
+
+// Enkel hälso-endpoint som kan användas i tester och av orkestratorer.
+// Returnerar 200 om servern är up och supabase-klienten är initierad eller
+// åtminstone inte kraschade vid init.
+app.get("/health", (req, res) => {
+  // Vi kan också returnera klientstatus som en del av hälsokontrollen vid behov.
+  const health = {
+    server: "ok",
+    supabase: supabase ? "initialized" : "not-initialized",
+  };
+  res.status(200).json(health);
 });
 
 // API-route: GET /api/jobs
