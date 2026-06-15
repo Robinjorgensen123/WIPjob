@@ -9,12 +9,10 @@ import { jest } from "@jest/globals";
 // För testsyfte sätt en test-API-nyckel så server.js initierar OpenAI-klienten.
 process.env.OPENAI_API_KEY = "test";
 
-// Mocka OpenAI SDK innan vi importerar app så att konstruktorn `new OpenAI()`
-// i server.js använder vår mock. Vi exponerar `createMock` så tester kan
+// i server.js använder vår mock. Vi exponerar `global.mockCreate` så tester kan
 // spionera på vad som skickas till SDK:ns `create`-metod.
-let createMock;
 jest.mock("openai", () => {
-  createMock = jest.fn().mockResolvedValue({
+  global.mockCreate = jest.fn().mockResolvedValue({
     choices: [
       {
         message: {
@@ -25,7 +23,7 @@ jest.mock("openai", () => {
   });
 
   function OpenAI() {
-    return { chat: { completions: { create: createMock } } };
+    return { chat: { completions: { create: global.mockCreate } } };
   }
 
   return { __esModule: true, default: OpenAI };
@@ -167,10 +165,10 @@ describe("POST /api/generate-cv (SDK payload assertion)", () => {
 
     // --- Assert ---
     // Först, förväntar vi att servern försökte anropa OpenAI SDK:n
-    expect(createMock).toHaveBeenCalled();
+    expect(global.mockCreate).toHaveBeenCalled();
 
     // Hämta det första anrops-argumentet till create-metoden
-    const calledArg = createMock.mock.calls[0][0];
+    const calledArg = global.mockCreate.mock.calls[0][0];
 
     // Kontrollera att `messages` finns och att en user-message innehåller vår userCv-text
     expect(calledArg).toHaveProperty("messages");
