@@ -11,7 +11,7 @@
 
 ## 🏗️ Phase 1: Project & Test Setup
 
-- [x] **Micro-Step 1.1**: Initialize directories. Create `/frontend` (Vite, React, Tailwind) and `/backend`. In backend, install `jest` and `supertest` for TDD testing.
+- [x] **Micro-Step 1.1**: Initialize directories. Create `/frontend` (Vite, React, Tailwind) and `/backend`. In backend, install `jest` and `supertest` for TDD testing. (Green)
 - [x] **Micro-Step 1.2**: Create a smoke test file `backend/tests/server.test.js` that checks if the server root `/` responds. Verify the test fails (Red).
 - [x] **Micro-Step 1.3**: Create `backend/server.js` with just enough code to make the smoke test pass (Green).
 
@@ -73,6 +73,31 @@
 - [x] **Micro-Step 8.2**: Implement state/local storage or a backend save for the uploaded CV in `CVManager.jsx`. (Green)
 - [x] **Micro-Step 8.3**: Write an end-to-end integration test asserting that clicking "Select & Tailor" sends the current localStorage CV to the API backend instead of using static fallbacks. (Green)
 - [x] **Micro-Step 8.4**: Wire up the AI trigger button in JobSearch.jsx to fetch the dynamic CV from localStorage and complete the full AI pipeline. (Green)
+
+---
+
+## 🗄️ Phase 9: Supabase Backend Database Integration
+
+- [ ] **Micro-Step 9.1**: Write a backend test in `backend/tests/supabase.test.js` asserting that the server connection to Supabase works and returns a `200` status when checking API health. (Red)
+- [ ] **Micro-Step 9.2**: Install `@supabase/supabase-js`, set up credentials in `.env`, and initialize the Supabase client in `backend/server.js` to pass the connection test. (Green)
+- [ ] **Micro-Step 9.3**: Write a backend test verifying that `POST /api/tracked-jobs` successfully saves a job's status (e.g., "Saved", "Applied", "Tailored") to a Supabase database table. (Red)
+- [ ] **Micro-Step 9.4**: Implement the Supabase table storage logic in `server.js` to persist job tracking metrics across sessions. (Green)
+
+---
+
+## 🤖 Phase 10: Production AI Integration (Un-mocking the AI)
+
+- [ ] **Micro-Step 10.1**: Write an integration test for `POST /api/generate-cv` that ensures a real system prompt and payload are formatted properly for the official OpenAI/Anthropic SDK wrapper (no basic mocks). (Red)
+- [ ] **Micro-Step 10.2**: Replace the hardcoded mock responses in `backend/server.js` with the real AI SDK completion logic using environment API keys. (Green)
+
+---
+
+## 💎 Phase 11: Frontend UI Overhaul & Polished Design
+
+- [ ] **Micro-Step 11.1**: Write a frontend component test in `JobSearch.test.jsx` that checks for the existence of advanced UI filters (search bar, application status tags, and action modall). (Red)
+- [ ] **Micro-Step 11.2**: Revamp `JobSearch.jsx` with a modern, responsive Tailwind dashboard layout including search filters and clear tracking status chips. (Green)
+- [ ] **Micro-Step 11.3**: Write a final end-to-end frontend smoke test checking that navigation, dynamic CV injection, and UI feedback states function without breaking layout flow. (Red)
+- [ ] **Micro-Step 11.4**: Finalize global CSS styling, refine error messages, and ensure all application sections are responsive and polished. (Green)
 
 ---
 
